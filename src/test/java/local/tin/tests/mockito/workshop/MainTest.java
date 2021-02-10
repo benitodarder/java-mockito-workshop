@@ -1,7 +1,6 @@
 package local.tin.tests.mockito.workshop;
 
 import java.util.ArrayDeque;
-import java.util.LinkedList;
 import local.tin.tests.mockito.workshop.utils.CalculatorUtils;
 import org.apache.log4j.Logger;
 import org.junit.Before;
@@ -9,7 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
