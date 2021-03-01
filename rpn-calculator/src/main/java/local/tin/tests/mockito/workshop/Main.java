@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
  */
 public class Main {
 
-    public static final String USAGE = Main.class.getSimpleName() + " <Operand> <Operation> <Operand>";
+    public static final String USAGE = Main.class.getSimpleName() + " <Operand> <Operand> <Operation>";
     public static final int REQUIRED_ARGUMENTS = 3;
     private static final Logger LOGGER = Logger.getLogger(Main.class);
     
