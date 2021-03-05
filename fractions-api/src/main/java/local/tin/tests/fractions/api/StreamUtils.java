@@ -9,7 +9,9 @@ import java.io.InputStream;
  */
 public class StreamUtils {
 
-    public static final int EOF = -1;    
+    public static final int FRACTION_NUMERIC_COMPONENTS = 2;
+    public static final String FRACTION_BAR = "/";
+    public static final int EOF = -1;
     public static final int ASCII_CODE_TAB = 9;
     public static final int ASCII_CODE_SPACE = 32;
     public static final int ASCII_CODE_SLASH = 47;
@@ -44,35 +46,26 @@ public class StreamUtils {
         int numerator = 0;
         int denominator = 0;
         try {
-            int inputChar = in.read();
-            while (inputChar == ASCII_CODE_TAB || inputChar == ASCII_CODE_SPACE) {
-                inputChar = in.read();
+            String string = getStringFromInputStream(in);
+            String[] stringSplit = string.split(FRACTION_BAR);
+            if (stringSplit.length != FRACTION_NUMERIC_COMPONENTS) {
+                throw new FractionException("Expression does not match <integer> / <integer>");
             }
-            while (inputChar != ASCII_CODE_SLASH && inputChar != ASCII_CODE_TAB && inputChar != ASCII_CODE_SPACE) {
-                if (inputChar >= ASCII_CODE_CERO && inputChar <= ASCII_CODE_NINE) {
-                    numerator = numerator * 10 + (inputChar - ASCII_CODE_CERO);
-                    inputChar = in.read();
-                } else {
-                    throw new FractionException("Unexpected character in numerator: " + (char) inputChar);
-                }
-            }
-            while (inputChar != ASCII_CODE_SLASH && (inputChar == ASCII_CODE_TAB || inputChar == ASCII_CODE_SPACE)) {
-                inputChar = in.read();
-            }
-            inputChar = in.read();
-            while (inputChar != EOF) {
-                if (inputChar >= ASCII_CODE_CERO && inputChar <= ASCII_CODE_NINE) {
-                    denominator = denominator * 10 + (inputChar - ASCII_CODE_CERO);
-                    inputChar = in.read();
-                } else {
-                    throw new FractionException("Unexpected character in denominator: " + (char) inputChar);
-                }
-            }
-
-        } catch (IOException ioe) {
+            numerator = Integer.parseInt(stringSplit[0].trim());
+            denominator = Integer.parseInt(stringSplit[1].trim());
+        } catch (IOException | NumberFormatException ioe) {
             throw new FractionException(ioe);
         }
         return new Fraction(numerator, denominator);
     }
 
+    private String getStringFromInputStream(InputStream inputStream) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        int currentChar = inputStream.read();
+        while (currentChar != EOF) {
+            stringBuilder.append((char) currentChar);
+            currentChar = inputStream.read();
+        }
+        return stringBuilder.toString();
+    }
 }
