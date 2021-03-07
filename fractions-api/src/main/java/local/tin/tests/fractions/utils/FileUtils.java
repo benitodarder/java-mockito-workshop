@@ -11,6 +11,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import local.tin.tests.fractions.api.Fraction;
+import local.tin.tests.fractions.api.FractionException;
+import local.tin.tests.fractions.api.StreamUtils;
 
 /**
  *
@@ -30,91 +35,14 @@ public class FileUtils {
         return instance;
     }
 
-    /**
-     * Returns a BufferedReader for the specified file path string.
-     *
-     * @param filePath String
-     * @return BufferedReader
-     * @throws FileNotFoundException
-     */
-    public BufferedReader getBufferedReader(String filePath) throws FileNotFoundException {
-        FileInputStream fileA = new FileInputStream(filePath);
-        InputStreamReader inputStreamA = new InputStreamReader(fileA);
-        return new BufferedReader(inputStreamA);
-    }
-
-    /**
-     * Opens the specified file path, and returns a Properties with the included
-     * properties.
-     *
-     * @param filePath String
-     * @return Properties
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    public Properties getPropertiesFile(String filePath) throws IOException {
-        InputStream fileInputStream = new FileInputStream(filePath);
-        Properties properties = new Properties();
-        properties.load(fileInputStream);
-        return properties;
-    }
-
-    /**
-     * Returns a String containing the content of the file.
-     *
-     * @param filePath String
-     * @return String
-     * @throws java.io.IOException
-     */
-    public String getFileAsString(String filePath) throws IOException {
-        BufferedReader bufferedReader = getBufferedReader(filePath);
-        StringBuilder stringBuilder = new StringBuilder();
-        String string = bufferedReader.readLine();
-        while (string != null) {
-            stringBuilder.append(string);
-            string = bufferedReader.readLine();
-            if (string != null) {
-                stringBuilder.append(System.lineSeparator());
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    /**
-     * Saves a String as the stated filePath file
-     *
-     * @param filePath String
-     * @param content String
-     * @throws java.io.IOException
-     */
-    public void saveStringAsFile(String filePath, String content) throws IOException {
-        BufferedWriter writer = null;
+    public List<Fraction> readFromFile(String filePath) throws FractionException {
         try {
-            writer = new BufferedWriter(new FileWriter(filePath));
-            writer.write(content);
-        } finally {
-            if (writer != null) {
-                 writer.close();       
-            }
+            InputStream inputStream = new FileInputStream(filePath);
+            return StreamUtils.getInstance().readFractions(inputStream);
+            
+        } catch (FileNotFoundException ex) {
+            throw new FractionException(ex);
         }
 
     }
-    
-    /**
-     * Returns a String List containing the content of the file.
-     *
-     * @param filePath String
-     * @return List of String
-     * @throws java.io.IOException
-     */
-    public List<String> getFileAsStringList(String filePath) throws IOException {
-        ArrayList<String> result = new ArrayList<>();
-        BufferedReader bufferedReader = getBufferedReader(filePath);
-        String string = bufferedReader.readLine();
-        while (string != null) {
-            result.add(string);
-            string = bufferedReader.readLine();
-        }
-        return result;
-    }    
 }

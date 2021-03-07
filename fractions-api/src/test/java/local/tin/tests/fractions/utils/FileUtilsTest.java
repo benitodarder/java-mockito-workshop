@@ -1,79 +1,69 @@
 package local.tin.tests.fractions.utils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import local.tin.tests.fractions.api.Fraction;
+import local.tin.tests.fractions.api.FractionException;
+import local.tin.tests.fractions.api.StreamUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  *
  * @author benito.darder
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({StreamUtils.class, FileInputStream.class, FileUtils.class})
 public class FileUtilsTest {
-    
-    
-    @Test
-    public void getFileInputStream_returs_the_bufferedreader() throws Exception {
-        
-        Object result  = FileUtils.getInstance().getBufferedReader(FileUtilsTest.class.getResource("sample.xml").getPath());
-        
-        assertThat(result, instanceOf(BufferedReader.class));
-    }    
-    
-    @Test(expected=IOException.class)
-    public void getFileInputStream_throws_ioexception_when_can_not_find_the_file() throws Exception {
-        
-        BufferedReader result  = FileUtils.getInstance().getBufferedReader("sample.xml");
-        
-    }   
-    
-    @Test
-    public void getPropertiesFile_returs_the_corresponding_properties() throws Exception {
 
-        
-        Properties result  = FileUtils.getInstance().getPropertiesFile(FileUtilsTest.class.getResource("sample.properties").getPath());
-        
-        assertThat(result.getProperty("prop1"), equalTo("prop1"));
-        assertThat(result.getProperty("prop2"), equalTo("2"));
-    }   
+    private static final String FILE_PATH = "file name";
+    private static StreamUtils mockedStreamUtils;
+    private FileInputStream mockedInputStream;
+    private Fraction mockedFraction01;
+    private Fraction mockedFraction02;
+    private List<Fraction> fractions;
     
-    @Test(expected=IOException.class)
-    public void getPropertiesFile_throws_ioexception_when_can_not_find_the_file() throws Exception {
-
-        
-        Properties result  = FileUtils.getInstance().getPropertiesFile("blabla");
-
-    }     
-    
-    @Test
-    public void getFileAsString_returns_the_file_content_as_string() throws Exception {
-        
-        String result = FileUtils.getInstance().getFileAsString(FileUtilsTest.class.getResource("sample.properties").getPath());
-        
-        assertThat(result.trim(), equalTo("prop1=prop1" + System.lineSeparator() + "prop2=2"));
+    @BeforeClass
+    public static void setUpClass() {
+        mockedStreamUtils = mock(StreamUtils.class);
     }
-      
-    @Test
-    public void saveStringAsFile_saves_the_string() throws IOException {
-        String filePath = "test.txt";
-        String content = "content";
-        
-        FileUtils.getInstance().saveStringAsFile(filePath, content);
-        
-        String savedFile = FileUtils.getInstance().getFileAsString(filePath);
-        assertThat(savedFile, equalTo(content));
+
+    @Before
+    public void setUp() throws FractionException, Exception {
+        PowerMockito.mockStatic(StreamUtils.class);
+        when(StreamUtils.getInstance()).thenReturn(mockedStreamUtils);
+        mockedInputStream = mock(FileInputStream.class);
+        PowerMockito.whenNew(FileInputStream.class).withArguments(FILE_PATH).thenReturn(mockedInputStream);
+        mockedFraction01 = mock(Fraction.class);
+        mockedFraction02 = mock(Fraction.class);
+        fractions = new ArrayList<>();
+        fractions.add(mockedFraction01);
+        fractions.add(mockedFraction02);
+        when(StreamUtils.getInstance().readFractions(mockedInputStream)).thenReturn(fractions);
     }
-    
+
     @Test
-    public void getFileAsStringList_returns_the_file_content_as_string_list() throws Exception {
-        
-        List<String> result = FileUtils.getInstance().getFileAsStringList(FileUtilsTest.class.getResource("sample.properties").getPath());
-        
-        assertThat(result.get(0), equalTo("prop1=prop1"));
-        assertThat(result.get(1), equalTo("prop2=2"));
-    }    
+    public void readFromFile_returns_one_item_list() throws Exception {
+
+        List<Fraction> result = FileUtils.getInstance().readFromFile(FILE_PATH);
+
+        assertThat(result, equalTo(fractions));
+    }
+
+
 }

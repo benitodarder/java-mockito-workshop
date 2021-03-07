@@ -2,6 +2,8 @@ package local.tin.tests.fractions.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -10,13 +12,15 @@ import java.io.InputStream;
 public class StreamUtils {
 
     public static final int FRACTION_NUMERIC_COMPONENTS = 2;
-    public static final String FRACTION_BAR = "/";
+    public static final String FRACTION_BAR_OBLIQUE = "/";
+    public static final String FRACTION_BAR_HORIRZONTAL = "-";
     public static final int EOF = -1;
     public static final int ASCII_CODE_TAB = 9;
     public static final int ASCII_CODE_SPACE = 32;
     public static final int ASCII_CODE_SLASH = 47;
     public static final int ASCII_CODE_CERO = 48;
     public static final int ASCII_CODE_NINE = 57;
+    public static final int ASCII_CODE_LINE_FEED = 10;
 
     private StreamUtils() {
     }
@@ -41,28 +45,30 @@ public class StreamUtils {
      *
      * @param in as InputStream
      * @return Fraction
+     * @throws local.tin.tests.fractions.api.FractionException
      */
-    public Fraction getFraction(InputStream in) throws FractionException {
-        int numerator = 0;
-        int denominator = 0;
+    public List<Fraction> readFractions(InputStream in) throws FractionException {
+        List<Fraction> fractions = new ArrayList<>();
         try {
             String string = getStringFromInputStream(in);
-            String[] stringSplit = string.split(FRACTION_BAR);
-            if (stringSplit.length != FRACTION_NUMERIC_COMPONENTS) {
-                throw new FractionException("Expression does not match <integer> / <integer>");
+            while (!string.isEmpty()) {
+                String[] stringSplit = string.split(FRACTION_BAR_OBLIQUE);
+                if (stringSplit.length != FRACTION_NUMERIC_COMPONENTS) {
+                    throw new FractionException("Expression does not match <integer> / <integer>.");
+                }
+                fractions.add(new Fraction(Integer.parseInt(stringSplit[0].trim()), Integer.parseInt(stringSplit[1].trim())));
+                string = getStringFromInputStream(in);
             }
-            numerator = Integer.parseInt(stringSplit[0].trim());
-            denominator = Integer.parseInt(stringSplit[1].trim());
         } catch (IOException | NumberFormatException ioe) {
             throw new FractionException(ioe);
         }
-        return new Fraction(numerator, denominator);
+        return fractions;
     }
 
     private String getStringFromInputStream(InputStream inputStream) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         int currentChar = inputStream.read();
-        while (currentChar != EOF) {
+        while (currentChar != EOF && currentChar != ASCII_CODE_LINE_FEED) {
             stringBuilder.append((char) currentChar);
             currentChar = inputStream.read();
         }
