@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
  * @author benitodarder
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Fraction.class, StreamUtils.class})
+@PrepareForTest({Fraction.class})
 public class StreamUtilsTest {
 
     private static final int ASCII_CODE_CERO = 48;
@@ -66,6 +66,7 @@ public class StreamUtilsTest {
     public void readFractions_skips_tabs_before_first_digit() throws FractionException, IOException {
         mockedInputStream = mock(InputStream.class);
         when(mockedInputStream.read()).thenReturn(StreamUtils.ASCII_CODE_TAB).thenReturn(ASCII_CODE_ONE).thenReturn(StreamUtils.ASCII_CODE_SLASH).thenReturn(ASCII_CODE_TWO).thenReturn(StreamUtils.EOF);
+        
 
         List<Fraction> result = StreamUtils.getInstance().readFractions(mockedInputStream);
 
@@ -121,15 +122,14 @@ public class StreamUtilsTest {
 
     @Test
     public void readFractions_creates_a_new_fraction_with_expected_values() throws Exception {
-        Fraction mockedFraction = mock(Fraction.class);
-        PowerMockito.whenNew(Fraction.class).withArguments(ONE, TWO).thenReturn(mockedFraction);
         mockedInputStream = mock(InputStream.class);
         when(mockedInputStream.read()).thenReturn(ASCII_CODE_ONE).thenReturn(StreamUtils.ASCII_CODE_SLASH).thenReturn(ASCII_CODE_TWO).thenReturn(StreamUtils.EOF);
 
         List<Fraction> result = StreamUtils.getInstance().readFractions(mockedInputStream);
 
         assertThat(result.size(), equalTo(1));
-        assertThat(result.contains(mockedFraction), equalTo(true));
+        assertThat(result.get(0).getNumerator(), equalTo(ONE));
+        assertThat(result.get(0).getDenominator(), equalTo(TWO));
     }
     
     @Test
@@ -165,4 +165,13 @@ public class StreamUtilsTest {
         assertThat(result.get(1).getNumerator(), equalTo(TWO));
         assertThat(result.get(1).getDenominator(), equalTo(THREE));        
     }
+    
+    @Test(expected = FractionException.class)
+    public void readFractions_throws_exception_when_stream_ioexception() throws FractionException, IOException {
+        mockedInputStream = mock(InputStream.class);
+        when(mockedInputStream.read()).thenReturn(ASCII_CODE_ONE).thenThrow(new IOException("a"));
+
+        List<Fraction> result = StreamUtils.getInstance().readFractions(mockedInputStream);
+
+    }    
 }

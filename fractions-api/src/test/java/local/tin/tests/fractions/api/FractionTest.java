@@ -134,4 +134,22 @@ public class FractionTest {
         assertThat(result.getDenominator(), equalTo(B * C));
         assertThat(result, equalTo(new Fraction(A * D, C * B)));
     }    
+    
+    @Test
+    public void getNumerator_returns_reduced_by_gcd() throws FractionException {
+        fraction = new Fraction(A * 4, B * 2);
+
+        int result = fraction.getNumerator();
+
+        assertThat(result, equalTo(A * 2));
+    }
+
+    @Test
+    public void getDenominator_returns_reduced_by_gcd() throws FractionException {
+        fraction = new Fraction(A * 2, B * 4);
+
+        int result = fraction.getDenominator();
+
+        assertThat(result, equalTo(B * 2));
+    }    
 }
