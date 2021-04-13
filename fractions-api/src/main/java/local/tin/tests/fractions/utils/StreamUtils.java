@@ -1,9 +1,11 @@
-package local.tin.tests.fractions.api;
+package local.tin.tests.fractions.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import local.tin.tests.fractions.api.Fraction;
+import local.tin.tests.fractions.api.FractionException;
 
 /**
  *

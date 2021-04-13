@@ -1,8 +1,11 @@
-package local.tin.tests.fractions.api;
+package local.tin.tests.fractions.utils;
 
+import local.tin.tests.fractions.utils.StreamUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import local.tin.tests.fractions.api.Fraction;
+import local.tin.tests.fractions.api.FractionException;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;

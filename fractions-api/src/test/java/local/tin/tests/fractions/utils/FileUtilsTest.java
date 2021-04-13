@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import local.tin.tests.fractions.api.Fraction;
 import local.tin.tests.fractions.api.FractionException;
-import local.tin.tests.fractions.api.StreamUtils;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.List;
 import local.tin.tests.fractions.api.Fraction;
 import local.tin.tests.fractions.api.FractionException;
-import local.tin.tests.fractions.api.StreamUtils;
 
 /**
  *
