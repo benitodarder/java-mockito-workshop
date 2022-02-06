@@ -88,7 +88,6 @@ public class FractionTest {
         anotherFraction = new Fraction(C, D);
 
         Fraction result = fraction.add(anotherFraction);
-        System.out.println(fraction + " + " + anotherFraction + " = " + result);
         
         assertThat(result.getNumerator(), equalTo(A * D + C * B));
         assertThat(result.getDenominator(), equalTo(B * D));
